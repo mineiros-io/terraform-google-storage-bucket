@@ -350,6 +350,10 @@ The following attributes are exported in the outputs of the module:
 
   Whether this module is enabled.
 
+- **`bucket`**
+
+  All attributes of the created `google_storage_bucket` resource.
+
 ## External Documentation
 
 ### Google Documentation:
