@@ -459,7 +459,7 @@ The following attributes are exported in the outputs of the module:
 
 - **`iam`**
 
-  The `iam` resource objects that define the access to the secret.
+  The `iam` resource objects that define the access to the resources.
 
 <!-- all outputs in outputs.tf-->
 
