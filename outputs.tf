@@ -4,7 +4,7 @@
 
 # remap iam to reduce one level of access (iam[]. instead of iam[].iam.)
 output "iam" {
-  description = "The iam resource objects that define the access to the resources."
+  description = "The iam resource objects that define access to the GCS bucket."
   value       = { for key, iam in module.iam : key => iam.iam }
 }
 

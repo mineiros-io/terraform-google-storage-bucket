@@ -459,7 +459,7 @@ The following attributes are exported in the outputs of the module:
 
 - **`iam`**
 
-  The `iam` resource objects that define the access to the resources.
+  The `iam` resource objects that define the access to the GCS bucket.
 
 <!-- all outputs in outputs.tf-->
 
