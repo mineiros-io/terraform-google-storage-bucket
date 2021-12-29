@@ -469,15 +469,12 @@ The following attributes are exported in the outputs of the module:
 ## External Documentation
 
 ### Google Documentation
-<!-- markdown-link-check-disable -->
 
   - https://cloud.google.com/storage
 
 ### Terraform Google Provider Documentation:
 
   - https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket
-<!-- markdown-link-check-disable -->
-
 ## Module Versioning
 
 This Module follows the principles of [Semantic Versioning (SemVer)].
@@ -532,25 +529,13 @@ Copyright &copy; 2020-2021 [Mineiros GmbH][homepage]
 
 [homepage]: https://mineiros.io/?ref=terraform-google-storage-bucket
 [hello@mineiros.io]: mailto:hello@mineiros.io
-
-<!-- markdown-link-check-disable -->
-
 [badge-build]: https://github.com/mineiros-io/terraform-google-storage-bucket/workflows/Tests/badge.svg
-
-<!-- markdown-link-check-enable -->
-
 [badge-semver]: https://img.shields.io/github/v/tag/mineiros-io/terraform-google-storage-bucket.svg?label=latest&sort=semver
 [badge-license]: https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg
 [badge-terraform]: https://img.shields.io/badge/Terraform-1.x-623CE4.svg?logo=terraform
 [badge-slack]: https://img.shields.io/badge/slack-@mineiros--community-f32752.svg?logo=slack
-
-<!-- markdown-link-check-disable -->
-
 [build-status]: https://github.com/mineiros-io/terraform-google-storage-bucket/actions
 [releases-github]: https://github.com/mineiros-io/terraform-google-storage-bucket/releases
-
-<!-- markdown-link-check-enable -->
-
 [releases-terraform]: https://github.com/hashicorp/terraform/releases
 [badge-tf-gcp]: https://img.shields.io/badge/google-3.x-1A73E8.svg?logo=terraform
 [releases-google-provider]: https://github.com/terraform-providers/terraform-provider-google/releases
@@ -559,9 +544,6 @@ Copyright &copy; 2020-2021 [Mineiros GmbH][homepage]
 [terraform]: https://www.terraform.io
 [gcp]: https://cloud.google.com/
 [semantic versioning (semver)]: https://semver.org/
-
-<!-- markdown-link-check-disable -->
-
 [variables.tf]: https://github.com/mineiros-io/terraform-google-storage-bucket/blob/main/variables.tf
 [examples/]: https://github.com/mineiros-io/terraform-google-storage-bucket/blob/main/examples
 [issues]: https://github.com/mineiros-io/terraform-google-storage-bucket/issues
@@ -569,5 +551,3 @@ Copyright &copy; 2020-2021 [Mineiros GmbH][homepage]
 [makefile]: https://github.com/mineiros-io/terraform-google-storage-bucket/blob/main/Makefile
 [pull requests]: https://github.com/mineiros-io/terraform-google-storage-bucket/pulls
 [contribution guidelines]: https://github.com/mineiros-io/terraform-google-storage-bucket/blob/main/CONTRIBUTING.md
-
-<!-- markdown-link-check-enable -->
