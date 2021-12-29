@@ -116,17 +116,17 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   ```hcl
   lifecycle_rules = [{
-    action = [{
+    action = {
       type          = "SetStorageClass"
       storage_class = "NEARLINE"
-    }]
-    condition = [{
+    }
+    condition = {
       age                   = 60
       created_before        = "2018-08-20"
-      with_state            = "live"
+      with_state            = "LIVE"
       matches_storage_class = ["REGIONAL"]
       num_newer_versions    = 10
-    }]
+    }
   }]
   ```
 
