@@ -16,7 +16,7 @@ module "iam" {
   module_enabled    = var.module_enabled
   module_depends_on = var.module_depends_on
 
-  bucket          = google_storage_bucket.bucket[0].name
+  bucket          = try(google_storage_bucket.bucket[0].name, null)
   role            = try(each.value.role, null)
   members         = try(each.value.members, null)
   authoritative   = try(each.value.authoritative, true)

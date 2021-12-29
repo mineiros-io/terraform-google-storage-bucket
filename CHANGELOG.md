@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix attributes in nested terraform-google-storage-bucket-iam to not fail when `module_enabled = false`
+
 ## [0.0.4]
 
 ### Added
