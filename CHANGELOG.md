@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking
 
-- Removed support for Terraform `< 1.0`
+- Removed support for Terraform `< 1.1.2`
+
+### Fixed
+
+- Fix a bug that is based on terraform type system issue
 
 ## [0.0.5]
 

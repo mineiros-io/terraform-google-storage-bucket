@@ -36,8 +36,58 @@ module "test" {
 
   # add all required arguments
   name = "unit-disabled"
+}
+
+module "testA" {
+  source = "../.."
+
+  module_enabled = false
+
+  # add all required arguments
+  name = "unit-disabled"
 
   # add all optional arguments that create additional resources
+  iam = [
+    {
+      role    = "roles/storage.objectAdmin"
+      members = ["serviceAccount:noneExistingServiceAccount"]
+    }
+  ]
+}
+
+module "testB" {
+  source = "../.."
+
+  module_enabled = false
+
+  # add all required arguments
+  name = "unit-disabled"
+
+  # add all optional arguments that create additional resources
+  policy_bindings = [
+    {
+      role    = "roles/storage.objectAdmin"
+      members = ["serviceAccount:noneExistingServiceAccount"]
+    }
+  ]
+}
+
+module "testC" {
+  source = "../.."
+
+  module_enabled = false
+
+  # add all required arguments
+  name = "unit-disabled"
+
+  # add all optional arguments that create additional resources
+  policy_bindings = [
+    {
+      role    = "roles/storage.objectAdmin"
+      members = ["serviceAccount:noneExistingServiceAccount"]
+    }
+  ]
+
   iam = [
     {
       role    = "roles/storage.objectAdmin"
