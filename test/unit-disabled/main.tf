@@ -28,6 +28,8 @@ provider "google" {
   project = var.gcp_project
 }
 
+data "google_project" "project" {}
+
 # DO NOT RENAME MODULE NAME
 module "test" {
   source = "../.."
@@ -49,8 +51,8 @@ module "testA" {
   # add all optional arguments that create additional resources
   iam = [
     {
-      role    = "roles/storage.objectAdmin"
-      members = ["serviceAccount:noneExistingServiceAccount"]
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
     }
   ]
 }
@@ -66,8 +68,8 @@ module "testB" {
   # add all optional arguments that create additional resources
   policy_bindings = [
     {
-      role    = "roles/storage.objectAdmin"
-      members = ["serviceAccount:noneExistingServiceAccount"]
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
     }
   ]
 }
@@ -83,15 +85,19 @@ module "testC" {
   # add all optional arguments that create additional resources
   policy_bindings = [
     {
-      role    = "roles/storage.objectAdmin"
-      members = ["serviceAccount:noneExistingServiceAccount"]
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
     }
   ]
 
   iam = [
     {
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
+    },
+    {
       role    = "roles/storage.objectAdmin"
-      members = ["serviceAccount:noneExistingServiceAccount"]
+      members = ["projectOwner:${data.google_project.project.project_id}"]
     }
   ]
 }
