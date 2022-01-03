@@ -1,11 +1,11 @@
 locals {
-  iam_map = var.policy_bindings == null ? { for iam in var.iam : iam.role => iam } : tomap({})
+  iam_map = var.policy_bindings == null ? { for iam in var.iam : iam.role => iam } : {}
 
   policy_bindings = var.policy_bindings != null ? {
     iam_policy = {
       policy_bindings = var.policy_bindings
     }
-  } : tomap({})
+  } : {}
 }
 
 module "iam" {
