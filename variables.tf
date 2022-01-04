@@ -138,12 +138,36 @@ variable "iam" {
   description = "(Optional) A list of IAM access."
   type        = any
   default     = []
+
+  # validate required keys in each object
+  validation {
+    condition     = alltrue([for x in var.iam : length(setintersection(keys(x), ["role", "members"])) == 2])
+    error_message = "Each object in var.iam must specify a role and a set of members."
+  }
+
+  # validate no invalid keys are in each object
+  validation {
+    condition     = alltrue([for x in var.iam : length(setsubtract(keys(x), ["role", "members", "authoritative"])) == 0])
+    error_message = "Each object in var.iam does only support role, members and authoritative attributes."
+  }
 }
 
 variable "policy_bindings" {
   description = "(Optional) A list of IAM policy bindings."
   type        = any
   default     = null
+
+  # validate required keys in each object
+  validation {
+    condition     = var.policy_bindings == null ? true : alltrue([for x in var.policy_bindings : length(setintersection(keys(x), ["role", "members"])) == 2])
+    error_message = "Each object in var.policy_bindings must specify a role and a set of members."
+  }
+
+  # validate no invalid keys are in each object
+  validation {
+    condition     = var.policy_bindings == null ? true : alltrue([for x in var.policy_bindings : length(setsubtract(keys(x), ["role", "members", "condition"])) == 0])
+    error_message = "Each object in var.policy_bindings does only support role, members and condition attributes."
+  }
 }
 
 # ------------------------------------------------------------------------------

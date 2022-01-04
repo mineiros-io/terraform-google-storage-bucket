@@ -28,8 +28,19 @@ provider "google" {
   project = var.gcp_project
 }
 
+data "google_project" "project" {}
+
 # DO NOT RENAME MODULE NAME
 module "test" {
+  source = "../.."
+
+  module_enabled = false
+
+  # add all required arguments
+  name = "unit-disabled"
+}
+
+module "testA" {
   source = "../.."
 
   module_enabled = false
@@ -40,8 +51,53 @@ module "test" {
   # add all optional arguments that create additional resources
   iam = [
     {
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
+    }
+  ]
+}
+
+module "testB" {
+  source = "../.."
+
+  module_enabled = false
+
+  # add all required arguments
+  name = "unit-disabled"
+
+  # add all optional arguments that create additional resources
+  policy_bindings = [
+    {
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
+    }
+  ]
+}
+
+module "testC" {
+  source = "../.."
+
+  module_enabled = false
+
+  # add all required arguments
+  name = "unit-disabled"
+
+  # add all optional arguments that create additional resources
+  policy_bindings = [
+    {
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
+    }
+  ]
+
+  iam = [
+    {
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
+    },
+    {
       role    = "roles/storage.objectAdmin"
-      members = ["serviceAccount:noneExistingServiceAccount"]
+      members = ["projectOwner:${data.google_project.project.project_id}"]
     }
   ]
 }
