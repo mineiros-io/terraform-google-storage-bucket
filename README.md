@@ -21,10 +21,9 @@ secure, and production-grade cloud infrastructure.
 - [Module Features](#module-features)
 - [Getting Started](#getting-started)
 - [Module Argument Reference](#module-argument-reference)
-  - [Top-level Arguments](#top-level-arguments)
-    - [Module Configuration](#module-configuration)
-    - [Main Resource Configuration](#main-resource-configuration)
-    - [Extended Resource Configuration](#extended-resource-configuration)
+  - [Module Configuration](#module-configuration)
+  - [Main Resource Configuration](#main-resource-configuration)
+  - [Extended Resource Configuration](#extended-resource-configuration)
 - [Module Outputs](#module-outputs)
 - [External Documentation](#external-documentation)
   - [Google Documentation](#google-documentation)
@@ -63,9 +62,7 @@ module "terraform-google-storage-bucket" {
 
 See [variables.tf] and [examples/] for details and use-cases.
 
-### Top-level Arguments
-
-#### Module Configuration
+### Module Configuration
 
 - [**`module_enabled`**](#var-module_enabled): *(Optional `bool`)*<a name="var-module_enabled"></a>
 
@@ -85,7 +82,7 @@ See [variables.tf] and [examples/] for details and use-cases.
   ]
   ```
 
-#### Main Resource Configuration
+### Main Resource Configuration
 
 - [**`name`**](#var-name): *(**Required** `string`)*<a name="var-name"></a>
 
@@ -357,7 +354,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `[]`.
 
-#### Extended Resource Configuration
+### Extended Resource Configuration
 
 - [**`iam`**](#var-iam): *(Optional `list(iam)`)*<a name="var-iam"></a>
 
