@@ -28,6 +28,13 @@ provider "google" {
   project = var.gcp_project
 }
 
+data "google_project" "project" {}
+
+resource "random_id" "suffix" {
+  byte_length = 16
+}
+
+
 # DO NOT RENAME MODULE NAME
 module "test" {
   source = "../.."
@@ -35,7 +42,7 @@ module "test" {
   module_enabled = true
 
   # add all required arguments
-  name = "unit-complete"
+  name = "unit-complete-${random_id.suffix.hex}"
 
   # add all optional arguments that create additional resources
   force_destroy               = true
@@ -76,6 +83,36 @@ module "test" {
   # }
 
   module_depends_on = ["nothing"]
+}
+
+module "testIAM" {
+  source = "../.."
+
+  name = "unit-complete-iam-${random_id.suffix.hex}"
+
+  force_destroy = true
+
+  iam = [
+    {
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
+    }
+  ]
+}
+
+module "testPolicy" {
+  source = "../.."
+
+  name = "unit-complete-policy-${random_id.suffix.hex}"
+
+  force_destroy = true
+
+  policy_bindings = [
+    {
+      role    = "roles/storage.objectViewer"
+      members = ["projectOwner:${data.google_project.project.project_id}"]
+    }
+  ]
 }
 
 # outputs generate non-idempotent terraform plans so we disable them for now unless we need them.

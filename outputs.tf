@@ -17,6 +17,11 @@ output "bucket" {
   value       = try(google_storage_bucket.bucket[0], null)
 }
 
+output "policy_binding" {
+  description = "All attributes of the created policy_bindings mineiros-io/storage-bucket-iam/google module."
+  value       = module.policy_bindings
+}
+
 # ----------------------------------------------------------------------------------------------------------------------
 # OUTPUT MODULE CONFIGURATION
 # ----------------------------------------------------------------------------------------------------------------------
