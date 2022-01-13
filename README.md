@@ -137,8 +137,6 @@ See [variables.tf] and [examples/] for details and use-cases.
   - [**`action`**](#attr-lifecycle_rules-action): *(**Required** `list(action)`)*<a name="attr-lifecycle_rules-action"></a>
 
     The Lifecycle Rule's action configuration.
-    
-    Each `action` object can have the following fields:
 
     Each `action` object in the list accepts the following attributes:
 
@@ -153,8 +151,6 @@ See [variables.tf] and [examples/] for details and use-cases.
   - [**`condition`**](#attr-lifecycle_rules-condition): *(**Required** `list(condition)`)*<a name="attr-lifecycle_rules-condition"></a>
 
     The Lifecycle Rule's action configuration.
-    
-    Each `condition` object can have the following fields:
 
     Each `condition` object in the list accepts the following attributes:
 

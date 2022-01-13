@@ -173,8 +173,6 @@ section {
           type        = list(action)
           description = <<-END
             The Lifecycle Rule's action configuration.
-
-            Each `action` object can have the following fields:
           END
 
           attribute "type" {
@@ -197,8 +195,6 @@ section {
           type        = list(condition)
           description = <<-END
             The Lifecycle Rule's action configuration.
-
-            Each `condition` object can have the following fields:
           END
 
           attribute "age" {
