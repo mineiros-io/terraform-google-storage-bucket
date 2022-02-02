@@ -454,19 +454,17 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 The following attributes are exported in the outputs of the module:
 
-- **`module_enabled`**
+- [**`module_enabled`**](#output-module_enabled): *(`bool`)*<a name="output-module_enabled"></a>
 
   Whether this module is enabled.
 
-- **`bucket`**
+- [**`bucket`**](#output-bucket): *(`object(bucket)`)*<a name="output-bucket"></a>
 
   All attributes of the created `google_storage_bucket` resource.
 
-- **`iam`**
+- [**`iam`**](#output-iam): *(`list(iam)`)*<a name="output-iam"></a>
 
   The `iam` resource objects that define the access to the GCS bucket.
-
-<!-- all outputs in outputs.tf-->
 
 ## External Documentation
 
