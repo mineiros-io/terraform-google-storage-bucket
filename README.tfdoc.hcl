@@ -67,7 +67,7 @@ section {
 
       ```hcl
       module "terraform-google-storage-bucket" {
-        source = "github.com/mineiros-io/terraform-google-storage-bucket?ref=v0.1.0"
+        source = "github.com/mineiros-io/terraform-google-storage-bucket?ref=v0.0.6"
 
         repository_id = "my-repository"
       }
