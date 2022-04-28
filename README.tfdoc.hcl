@@ -52,7 +52,7 @@ section {
     content = <<-END
       This module implements the following terraform resources
 
-      - `google_artifact_registry_repository`
+      - `google_storage_bucket`
 
       and supports additional features of the following modules:
 
