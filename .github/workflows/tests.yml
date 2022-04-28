@@ -4,11 +4,15 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
 
 env:
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.MINEIROS_TESTING_AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.MINEIROS_TESTING_AWS_ACCESS_KEY_ID }}
   GOOGLE_CREDENTIALS: ${{ secrets.MINEIROS_TESTING_GCP_SA_KEY_FILE }}
-  TF_VAR_GCP_PROJECT: ${{ secrets.MINEIROS_TESTING_GCP_PROJECT }}
+  TEST_GCP_PROJECT: ${{ secrets.MINEIROS_TESTING_GCP_PROJECT }}
+  TEST_GCP_ORG_DOMAIN: ${{ secrets.MINEIROS_TESTING_GCP_ORG_DOMAIN }}
 
 concurrency:
   group: terraform-google-storage-bucket
@@ -21,9 +25,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Run pre-commit
-        run: make test/pre-commit
+        run: make test/docker/pre-commit
 
   unit-tests:
     needs: pre-commit
@@ -33,5 +39,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Check for Terraform file changes
+        uses: getsentry/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            terraform:
+              - '*.tf'
+              - 'test/**/*.tf'
+              - 'test/**/*.go'
+              - 'test/go.mod'
+              - 'test/go.sum'
+
       - name: Run Unit Tests
-        run: make test/unit-tests
+        if: steps.changes.outputs.terraform == 'true'
+        run: make test/docker/unit-tests
