@@ -3,7 +3,7 @@ locals {
 }
 
 module "iam" {
-  source = "github.com/mineiros-io/terraform-google-storage-bucket-iam.git?ref=v0.0.2"
+  source = "github.com/mineiros-io/terraform-google-storage-bucket-iam.git?ref=v0.0.3"
 
   for_each = var.policy_bindings == null ? local.iam_map : {}
 
@@ -22,7 +22,7 @@ moved {
 }
 
 module "policy_bindings" {
-  source = "github.com/mineiros-io/terraform-google-storage-bucket-iam.git?ref=v0.0.2"
+  source = "github.com/mineiros-io/terraform-google-storage-bucket-iam.git?ref=v0.0.3"
 
   count = var.policy_bindings != null ? 1 : 0
 
