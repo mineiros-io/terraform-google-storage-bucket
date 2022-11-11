@@ -124,6 +124,11 @@ test/unit-tests:
 terradoc:
 	$(call quiet-command,terradoc generate -o README.md README.tfdoc.hcl)
 
+## Generate shared configuration for tests
+.PHONY: terramate
+terramate:
+	$(call quiet-command,terramate generate)
+
 ## Clean up cache and temporary files
 .PHONY: clean
 clean:
