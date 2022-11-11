@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+### Added
+
+- Add support for variable `computed_members_map`
+- Add support for `iam.condition`
+- Add support for `iam.roles`
+
+### Removed
+
+- BREAKING CHANGE: Remove support for Terraform before v1.0
+- BREAKING CHANGE: Remove support for Terraform Google Provider before v4.0
+- BREAKING CHANEG: Remove output `module_enabled`
 
 ## [0.0.6]
 
