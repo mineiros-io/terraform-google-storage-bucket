@@ -82,30 +82,6 @@ section {
     END
 
     section {
-      title = "Module Configuration"
-
-      variable "module_enabled" {
-        type        = bool
-        default     = true
-        description = <<-END
-          Specifies whether resources in the module will be created.
-        END
-      }
-
-      variable "module_depends_on" {
-        type           = list(dependency)
-        description    = <<-END
-          A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
-        END
-        readme_example = <<-END
-          module_depends_on = [
-            google_network.network
-          ]
-        END
-      }
-    }
-
-    section {
       title = "Main Resource Configuration"
 
       variable "name" {
@@ -159,11 +135,15 @@ section {
               storage_class = "NEARLINE"
             }
             condition = {
-              age                   = 60
-              created_before        = "2018-08-20"
-              with_state            = "LIVE"
-              matches_storage_class = ["REGIONAL"]
-              num_newer_versions    = 10
+              age                        = 60
+              created_before             = "2018-08-20"
+              with_state                 = "LIVE"
+              matches_storage_class      = ["REGIONAL"]
+              num_newer_versions         = 10
+              custom_time_before         = "1970-01-01"
+              days_since_custom_time     = 1
+              days_since_noncurrent_time = 1
+              noncurrent_time_before     = "1970-01-01"
             }
           }]
         END
@@ -247,7 +227,7 @@ section {
           }
 
           attribute "days_since_noncurrent_time" {
-            type        = string
+            type        = number
             description = <<-END
               Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.
             END
@@ -276,7 +256,7 @@ section {
           Configuration if the bucket acts as a website.
         END
         readme_example = <<-END
-          website {
+          website = {
             main_page_suffix = "index.html"
             not_found_page   = "404.html"
           }
@@ -303,12 +283,12 @@ section {
           The bucket's Cross-Origin Resource Sharing (CORS) configuration.
         END
         readme_example = <<-END
-          cors {
+          cors = [{
             origin          = ["http://image-store.com"]
             method          = ["GET", "HEAD", "PUT", "POST", "DELETE"]
             response_header = ["*"]
             max_age_seconds = 3600
-          }
+          }]
         END
 
         attribute "origin" {
@@ -353,7 +333,7 @@ section {
           The bucket's Access & Storage Logs configuration.
         END
         readme_example = <<-END
-          logging {
+          logging = {
             log_bucket        = "example-log-bucket"
             log_object_prefix = "gcs-log"
           }
@@ -381,7 +361,7 @@ section {
           Configuration of the bucket's data retention policy for how long objects in the bucket should be retained.
         END
         readme_example = <<-END
-          retention_policy {
+          retention_policy = {
             is_locked        = false
             retention_period = 200000
           }
@@ -498,6 +478,7 @@ section {
             - `projectOwner:projectid`: Owners of the given project. For example, `projectOwner:my-example-project`
             - `projectEditor:projectid`: Editors of the given project. For example, `projectEditor:my-example-project`
             - `projectViewer:projectid`: Viewers of the given project. For example, `projectViewer:my-example-project`
+            - `computed:{identifier}`: An existing key from `var.computed_members_map`.
           END
         }
 
@@ -508,6 +489,13 @@ section {
           END
         }
 
+        attribute "roles" {
+          type        = list(string)
+          description = <<-END
+            The set of roles that should be applied. Note that custom roles must be of the format `[projects|organizations]/{parent-name}/roles/{role-name}`.
+          END
+        }
+
         attribute "authoritative" {
           type        = bool
           default     = true
@@ -515,6 +503,14 @@ section {
             Whether to exclusively set (authoritative mode) or add (non-authoritative/additive mode) members to the role.
           END
         }
+      }
+
+      variable "computed_members_map" {
+        type        = map(string)
+        description = <<-END
+          A map of members to replace in `members` of various IAM settings to handle terraform computed values.
+        END
+        default     = {}
       }
 
       variable "policy_bindings" {
@@ -587,6 +583,30 @@ section {
         }
       }
     }
+
+    section {
+      title = "Module Configuration"
+
+      variable "module_enabled" {
+        type        = bool
+        default     = true
+        description = <<-END
+          Specifies whether resources in the module will be created.
+        END
+      }
+
+      variable "module_depends_on" {
+        type           = list(dependency)
+        description    = <<-END
+          A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
+        END
+        readme_example = <<-END
+          module_depends_on = [
+            google_network.network
+          ]
+        END
+      }
+    }
   }
 
   section {
@@ -594,13 +614,6 @@ section {
     content = <<-END
       The following attributes are exported in the outputs of the module:
     END
-
-    output "module_enabled" {
-      type        = bool
-      description = <<-END
-        Whether this module is enabled.
-      END
-    }
 
     output "bucket" {
       type        = object(bucket)
@@ -613,6 +626,13 @@ section {
       type        = list(iam)
       description = <<-END
         The `iam` resource objects that define the access to the GCS bucket.
+      END
+    }
+
+    output "policy_binding" {
+      type        = object(policy_binding)
+      description = <<-END
+        All attributes of the created policy_bindings mineiros-io/storage-bucket-iam/google module.
       END
     }
   }

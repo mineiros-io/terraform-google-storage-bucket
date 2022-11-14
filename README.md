@@ -21,9 +21,9 @@ secure, and production-grade cloud infrastructure.
 - [Module Features](#module-features)
 - [Getting Started](#getting-started)
 - [Module Argument Reference](#module-argument-reference)
-  - [Module Configuration](#module-configuration)
   - [Main Resource Configuration](#main-resource-configuration)
   - [Extended Resource Configuration](#extended-resource-configuration)
+  - [Module Configuration](#module-configuration)
 - [Module Outputs](#module-outputs)
 - [External Documentation](#external-documentation)
   - [Google Documentation](#google-documentation)
@@ -61,26 +61,6 @@ module "terraform-google-storage-bucket" {
 ## Module Argument Reference
 
 See [variables.tf] and [examples/] for details and use-cases.
-
-### Module Configuration
-
-- [**`module_enabled`**](#var-module_enabled): *(Optional `bool`)*<a name="var-module_enabled"></a>
-
-  Specifies whether resources in the module will be created.
-
-  Default is `true`.
-
-- [**`module_depends_on`**](#var-module_depends_on): *(Optional `list(dependency)`)*<a name="var-module_depends_on"></a>
-
-  A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
-
-  Example:
-
-  ```hcl
-  module_depends_on = [
-    google_network.network
-  ]
-  ```
 
 ### Main Resource Configuration
 
@@ -123,11 +103,15 @@ See [variables.tf] and [examples/] for details and use-cases.
       storage_class = "NEARLINE"
     }
     condition = {
-      age                   = 60
-      created_before        = "2018-08-20"
-      with_state            = "LIVE"
-      matches_storage_class = ["REGIONAL"]
-      num_newer_versions    = 10
+      age                        = 60
+      created_before             = "2018-08-20"
+      with_state                 = "LIVE"
+      matches_storage_class      = ["REGIONAL"]
+      num_newer_versions         = 10
+      custom_time_before         = "1970-01-01"
+      days_since_custom_time     = 1
+      days_since_noncurrent_time = 1
+      noncurrent_time_before     = "1970-01-01"
     }
   }]
   ```
@@ -182,7 +166,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
       Days since the date set in the `customTime` metadata for the object. This condition is satisfied when the current date and time is at least the specified number of days after the `customTime`.
 
-    - [**`days_since_noncurrent_time`**](#attr-lifecycle_rules-condition-days_since_noncurrent_time): *(Optional `string`)*<a name="attr-lifecycle_rules-condition-days_since_noncurrent_time"></a>
+    - [**`days_since_noncurrent_time`**](#attr-lifecycle_rules-condition-days_since_noncurrent_time): *(Optional `number`)*<a name="attr-lifecycle_rules-condition-days_since_noncurrent_time"></a>
 
       Relevant only for versioned objects. Number of days elapsed since the noncurrent timestamp of an object.
 
@@ -203,7 +187,7 @@ See [variables.tf] and [examples/] for details and use-cases.
   Example:
 
   ```hcl
-  website {
+  website = {
     main_page_suffix = "index.html"
     not_found_page   = "404.html"
   }
@@ -226,12 +210,12 @@ See [variables.tf] and [examples/] for details and use-cases.
   Example:
 
   ```hcl
-  cors {
+  cors = [{
     origin          = ["http://image-store.com"]
     method          = ["GET", "HEAD", "PUT", "POST", "DELETE"]
     response_header = ["*"]
     max_age_seconds = 3600
-  }
+  }]
   ```
 
   Each `cors` object in the list accepts the following attributes:
@@ -263,7 +247,7 @@ See [variables.tf] and [examples/] for details and use-cases.
   Example:
 
   ```hcl
-  logging {
+  logging = {
     log_bucket        = "example-log-bucket"
     log_object_prefix = "gcs-log"
   }
@@ -286,7 +270,7 @@ See [variables.tf] and [examples/] for details and use-cases.
   Example:
 
   ```hcl
-  retention_policy {
+  retention_policy = {
     is_locked        = false
     retention_period = 200000
   }
@@ -380,6 +364,7 @@ See [variables.tf] and [examples/] for details and use-cases.
     - `projectOwner:projectid`: Owners of the given project. For example, `projectOwner:my-example-project`
     - `projectEditor:projectid`: Editors of the given project. For example, `projectEditor:my-example-project`
     - `projectViewer:projectid`: Viewers of the given project. For example, `projectViewer:my-example-project`
+    - `computed:{identifier}`: An existing key from `var.computed_members_map`.
 
     Default is `[]`.
 
@@ -387,11 +372,21 @@ See [variables.tf] and [examples/] for details and use-cases.
 
     The role that should be applied. Note that custom roles must be of the format `[projects|organizations]/{parent-name}/roles/{role-name}`.
 
+  - [**`roles`**](#attr-iam-roles): *(Optional `list(string)`)*<a name="attr-iam-roles"></a>
+
+    The set of roles that should be applied. Note that custom roles must be of the format `[projects|organizations]/{parent-name}/roles/{role-name}`.
+
   - [**`authoritative`**](#attr-iam-authoritative): *(Optional `bool`)*<a name="attr-iam-authoritative"></a>
 
     Whether to exclusively set (authoritative mode) or add (non-authoritative/additive mode) members to the role.
 
     Default is `true`.
+
+- [**`computed_members_map`**](#var-computed_members_map): *(Optional `map(string)`)*<a name="var-computed_members_map"></a>
+
+  A map of members to replace in `members` of various IAM settings to handle terraform computed values.
+
+  Default is `{}`.
 
 - [**`policy_bindings`**](#var-policy_bindings): *(Optional `list(policy_binding)`)*<a name="var-policy_bindings"></a>
 
@@ -450,13 +445,29 @@ See [variables.tf] and [examples/] for details and use-cases.
 
       An optional description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
 
+### Module Configuration
+
+- [**`module_enabled`**](#var-module_enabled): *(Optional `bool`)*<a name="var-module_enabled"></a>
+
+  Specifies whether resources in the module will be created.
+
+  Default is `true`.
+
+- [**`module_depends_on`**](#var-module_depends_on): *(Optional `list(dependency)`)*<a name="var-module_depends_on"></a>
+
+  A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
+
+  Example:
+
+  ```hcl
+  module_depends_on = [
+    google_network.network
+  ]
+  ```
+
 ## Module Outputs
 
 The following attributes are exported in the outputs of the module:
-
-- [**`module_enabled`**](#output-module_enabled): *(`bool`)*<a name="output-module_enabled"></a>
-
-  Whether this module is enabled.
 
 - [**`bucket`**](#output-bucket): *(`object(bucket)`)*<a name="output-bucket"></a>
 
@@ -465,6 +476,10 @@ The following attributes are exported in the outputs of the module:
 - [**`iam`**](#output-iam): *(`list(iam)`)*<a name="output-iam"></a>
 
   The `iam` resource objects that define the access to the GCS bucket.
+
+- [**`policy_binding`**](#output-policy_binding): *(`object(policy_binding)`)*<a name="output-policy_binding"></a>
+
+  All attributes of the created policy_bindings mineiros-io/storage-bucket-iam/google module.
 
 ## External Documentation
 

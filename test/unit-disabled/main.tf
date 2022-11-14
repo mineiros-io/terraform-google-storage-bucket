@@ -1,36 +1,3 @@
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# EMPTY FEATURES (DISABLED) UNIT TEST
-# This module tests an empty set of features.
-# The purpose is to verify no resources are created when the module is disabled.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-variable "gcp_region" {
-  type        = string
-  description = "(Required) The gcp region in which all resources will be created."
-}
-
-variable "gcp_project" {
-  type        = string
-  description = "(Required) The ID of the project in which the resource belongs."
-}
-
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 4.0"
-    }
-  }
-}
-
-provider "google" {
-  region  = var.gcp_region
-  project = var.gcp_project
-}
-
-data "google_project" "project" {}
-
-# DO NOT RENAME MODULE NAME
 module "test" {
   source = "../.."
 
@@ -52,7 +19,7 @@ module "testA" {
   iam = [
     {
       role    = "roles/storage.objectViewer"
-      members = ["projectOwner:${data.google_project.project.project_id}"]
+      members = ["projectOwner:${local.project_id}"]
     }
   ]
 }
@@ -69,7 +36,7 @@ module "testB" {
   policy_bindings = [
     {
       role    = "roles/storage.objectViewer"
-      members = ["projectOwner:${data.google_project.project.project_id}"]
+      members = ["projectOwner:${local.project_id}"]
     }
   ]
 }
@@ -86,18 +53,18 @@ module "testC" {
   policy_bindings = [
     {
       role    = "roles/storage.objectViewer"
-      members = ["projectOwner:${data.google_project.project.project_id}"]
+      members = ["projectOwner:${local.project_id}"]
     }
   ]
 
   iam = [
     {
       role    = "roles/storage.objectViewer"
-      members = ["projectOwner:${data.google_project.project.project_id}"]
+      members = ["projectOwner:${local.project_id}"]
     },
     {
       role    = "roles/storage.objectAdmin"
-      members = ["projectOwner:${data.google_project.project.project_id}"]
+      members = ["projectOwner:${local.project_id}"]
     }
   ]
 }
