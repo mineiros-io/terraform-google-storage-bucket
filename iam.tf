@@ -10,7 +10,7 @@ locals {
   iam = concat(local.iam_role, local.iam_roles)
 
   iam_map = { for idx, iam in local.iam :
-    try(iam._key, "${iam.role}/${iam.condition._key}", "${iam.role}/${md5(jsonencode(iam.condition))}", iam.role) => idx
+    try(iam._key, "${iam.role}/${iam.condition._key}", iam.condition != null ? "${iam.role}/${md5(jsonencode(iam.condition))}" : iam.role, iam.role) => idx
   }
 }
 
