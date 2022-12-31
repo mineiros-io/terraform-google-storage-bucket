@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0]
+
+### Changed
+
+- BREAKING CHANGE: Allow `iam.condition` to create the same terraform id index as an unset `iam.condition`.
+  This is breaking indexing and will recreate the resource unless `iam._key` is set to the previous value.
+
 ## [0.1.0]
 
 ### Added
@@ -65,7 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Implementation
 
-[unreleased]: https://github.com/mineiros-io/terraform-google-storage-bucket/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/mineiros-io/terraform-google-storage-bucket/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mineiros-io/terraform-google-storage-bucket/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mineiros-io/terraform-google-storage-bucket/compare/v0.0.6...v0.1.0
 [0.0.6]: https://github.com/mineiros-io/terraform-google-storage-bucket/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/mineiros-io/terraform-google-storage-bucket/compare/v0.0.4...v0.0.5
