@@ -1,5 +1,4 @@
 // TERRAMATE: GENERATED AUTOMATICALLY DO NOT EDIT
-// TERRAMATE: originated from generate_hcl block on /test/terramate_google.tm.hcl
 
 variable "gcp_project" {
   default     = null
@@ -25,11 +24,11 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 4.0"
+      version = ">= 4.0, <6"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
-      version = "~> 4.0"
+      version = ">= 4.0, <6"
     }
     random = {
       source  = "hashicorp/random"
