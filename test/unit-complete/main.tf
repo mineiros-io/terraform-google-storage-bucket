@@ -1,5 +1,5 @@
 module "test-sa" {
-  source = "github.com/mineiros-io/terraform-google-service-account?ref=v0.0.12"
+  source = "github.com/mineiros-io/terraform-google-service-account?ref=v0.2.1"
 
   account_id = "service-account-id-${local.random_suffix}"
 }
@@ -114,7 +114,10 @@ module "test1" {
   location                    = "EU"
   project                     = local.project_id
   storage_class               = "NEARLINE"
+  public_access_prevention    = "enforced"
   uniform_bucket_level_access = true
+  enable_object_retention     = true
+  default_event_based_hold    = true
   requester_pays              = true
   object_creators             = ["user:member@example.com"]
   object_viewers              = ["user:member@example.com"]
@@ -129,9 +132,12 @@ module "test1" {
     }
     condition = {
       age                        = 60
+      no_age                     = false
       created_before             = "2021-08-20"
       with_state                 = "LIVE"
       matches_storage_class      = ["STANDARD"]
+      matches_prefix             = ["pre", "bucket"]
+      matches_suffix             = ["suff"]
       num_newer_versions         = 10
       custom_time_before         = "1970-01-01"
       days_since_custom_time     = 1
@@ -163,6 +169,11 @@ module "test1" {
   retention_policy = {
     is_locked        = false
     retention_period = 200000
+  }
+
+  autoclass = {
+    enabled                = true
+    terminal_storage_class = "ARCHIVE"
   }
 
   labels = {
@@ -215,4 +226,17 @@ module "testPolicy" {
       members = ["projectOwner:example-project"]
     }
   ]
+}
+
+module "testDualRegionBucket" {
+  source = "../.."
+
+  name = "unit-complete-policy"
+
+  force_destroy = true
+
+  rpo = "ASYNC_TURBO"
+  custom_placement_config = {
+    data_locations = ["EUROPE-WEST1", "EUROPE-WEST3"]
+  }
 }

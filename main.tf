@@ -11,6 +11,10 @@ resource "google_storage_bucket" "bucket" {
   labels                      = var.labels
   requester_pays              = var.requester_pays
   uniform_bucket_level_access = var.uniform_bucket_level_access
+  default_event_based_hold    = var.default_event_based_hold
+  enable_object_retention     = var.enable_object_retention
+  public_access_prevention    = try(var.public_access_prevention, "inherited")
+  rpo                         = var.rpo
 
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rules
@@ -22,9 +26,12 @@ resource "google_storage_bucket" "bucket" {
       }
       condition {
         age                        = try(lifecycle_rule.value.condition.age, null)
+        no_age                     = try(lifecycle_rule.value.condition.no_age, null)
         created_before             = try(lifecycle_rule.value.condition.created_before, null)
         with_state                 = try(lifecycle_rule.value.condition.with_state, null)
         matches_storage_class      = try(lifecycle_rule.value.condition.matches_storage_class, null)
+        matches_prefix             = try(lifecycle_rule.value.condition.matches_prefix, null)
+        matches_suffix             = try(lifecycle_rule.value.condition.matches_suffix, null)
         num_newer_versions         = try(lifecycle_rule.value.condition.num_newer_versions, null)
         custom_time_before         = try(lifecycle_rule.value.condition.custom_time_before, null)
         days_since_custom_time     = try(lifecycle_rule.value.condition.days_since_custom_time, null)
@@ -39,6 +46,15 @@ resource "google_storage_bucket" "bucket" {
 
     content {
       enabled = var.versioning_enabled
+    }
+  }
+
+  dynamic "autoclass" {
+    for_each = var.autoclass != null ? ["autoclass"] : []
+
+    content {
+      enabled                = var.autoclass.enabled
+      terminal_storage_class = var.autoclass.terminal_storage_class
     }
   }
 
@@ -85,6 +101,14 @@ resource "google_storage_bucket" "bucket" {
 
     content {
       default_kms_key_name = var.encryption_default_kms_key_name
+    }
+  }
+
+  dynamic "custom_placement_config" {
+    for_each = var.custom_placement_config != null ? ["custom_placement_config"] : []
+
+    content {
+      data_locations = var.custom_placement_config.data_locations
     }
   }
 }
