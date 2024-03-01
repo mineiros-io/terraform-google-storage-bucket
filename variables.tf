@@ -54,8 +54,44 @@ variable "versioning_enabled" {
   default     = false
 }
 
+variable "rpo" {
+  description = "(Optional) The recovery point objective for cross-region replication of the bucket. Applicable only for dual and multi-region buckets."
+  type        = string
+  default     = null
+}
+
+variable "default_event_based_hold" {
+  description = "(Optional) Whether or not to automatically apply an eventBasedHold to new objects added to the bucket."
+  type        = bool
+  default     = false
+}
+
+variable "enable_object_retention" {
+  description = "(Optional) Enables object retention on a storage bucket."
+  type        = bool
+  default     = false
+}
+
+variable "public_access_prevention" {
+  description = "Prevents public access to a bucket."
+  type        = string
+  default     = "inherited"
+}
+
 variable "website" {
   description = "(Optional) Configuration if the bucket acts as a website."
+  type        = any
+  default     = null
+}
+
+variable "autoclass" {
+  description = "(Optional) Autoclass configuration"
+  type        = any
+  default     = null
+}
+
+variable "custom_placement_config" {
+  description = "(Optional) The bucket's custom location configuration, which specifies the individual regions that comprise a dual-region bucket. If the bucket is designated a single or multi-region, the parameters are empty."
   type        = any
   default     = null
 }

@@ -40,7 +40,7 @@ section {
     A [Terraform](https://www.terraform.io) module to create a [Google Cloud Storage](https://cloud.google.com/storage) on [Google Cloud Services (GCP)](https://cloud.google.com/).
 
     **_This module supports Terraform version 1
-    and is compatible with the Terraform Google Provider version 4._** and 5._**
+    and is compatible with the Terraform Google Provider version >= 5.10
 
     This module is part of our Infrastructure as Code (IaC) framework
     that enables our users and customers to easily deploy and manage reusable,
@@ -136,9 +136,12 @@ section {
             }
             condition = {
               age                        = 60
+              no_age = false
               created_before             = "2018-08-20"
               with_state                 = "LIVE"
               matches_storage_class      = ["REGIONAL"]
+              matches_prefix = ["bucket"]
+              matches_suffix = []
               num_newer_versions         = 10
               custom_time_before         = "1970-01-01"
               days_since_custom_time     = 1
@@ -184,6 +187,13 @@ section {
             END
           }
 
+          attribute "no_age" {
+            type        = bool
+            description = <<-END
+              While set true, age value will be omitted. Required to set true when age is unset in the config file.
+            END
+          }
+
           attribute "created_before" {
             type        = string
             description = <<-END
@@ -202,6 +212,20 @@ section {
             type        = string
             description = <<-END
               Storage Class of objects to satisfy this condition. Supported values include: `STANDARD`, `MULTI_REGIONAL`, `REGIONAL`, `NEARLINE`, `COLDLINE`, `ARCHIVE`, `DURABLE_REDUCED_AVAILABILITY`.
+            END
+          }
+
+          attribute "matches_prefix" {
+            type        = string
+            description = <<-END
+              One or more matching name prefixes to satisfy this condition.
+            END
+          }
+
+          attribute "matches_suffix" {
+            type        = string
+            description = <<-END
+              One or more matching name suffixes to satisfy this condition.
             END
           }
 
@@ -277,6 +301,38 @@ section {
         }
       }
 
+      variable "autoclass" {
+        type           = object(website)
+        description    = <<-END
+          The bucket's Autoclass configuration.
+        END
+        readme_example = <<-END
+          autoclass = {
+            enabled = true
+            terminal_storage_class   = "NEARLINE"
+          }
+        END
+
+        attribute "enabled" {
+          required    = true
+          type        = string
+          description = <<-END
+            While set to true, autoclass automatically transitions 
+            objects in your bucket to appropriate storage classes 
+            based on each object's access pattern.
+          END
+        }
+
+        attribute "terminal_storage_class" {
+          type        = string
+          description = <<-END
+            The storage class that objects in the bucket eventually 
+            transition to if they are not read for a certain length of time. 
+            Supported values include: NEARLINE, ARCHIVE.
+          END
+        }
+      }
+
       variable "cors" {
         type           = list(cors)
         description    = <<-END
@@ -325,6 +381,21 @@ section {
         description = <<-END
           The id of a Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified. You must pay attention to whether the crypto key is available in the location that this bucket is created in.
         END
+      }
+
+      variable "custom_placement_config" {
+        type        = object(custom_placement_config)
+        description = <<-END
+          The bucket's custom location configuration, which specifies the individual regions that comprise a dual-region bucket. If the bucket is designated a single or multi-region, the parameters are empty.
+        END
+
+        attribute "data_locations" {
+          required    = true
+          type        = list(string)
+          description = <<-END
+            The list of individual regions that comprise a dual-region bucket. If any of the data_locations changes, it will recreate the bucket.
+          END
+        }
       }
 
       variable "logging" {
@@ -404,6 +475,45 @@ section {
         default     = true
         description = <<-END
           Enables Uniform bucket-level access access to a bucket.
+        END
+      }
+
+      variable "default_event_based_hold" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Whether or not to automatically apply an eventBasedHold to new objects added to the bucket.
+        END
+      }
+
+      variable "enable_object_retention" {
+        type        = bool
+        default     = false
+        description = <<-END
+          Enables object retention on a storage bucket.
+        END
+      }
+
+      variable "public_access_prevention" {
+        type        = string
+        default     = "inherited"
+        description = <<-END
+          Prevents public access to a bucket. Acceptable values are "inherited" or "enforced". 
+          If "inherited", the bucket uses public access prevention. only if the bucket is subject 
+          to the public access prevention organization policy constraint. Defaults to "inherited".
+        END
+      }
+
+      variable "rpo" {
+        type        = string
+        default     = null
+        description = <<-END
+          The recovery point objective for cross-region replication of the bucket. 
+          Applicable only for dual and multi-region buckets. 
+          "DEFAULT" sets default replication. 
+          "ASYNC_TURBO" value enables turbo replication, valid for dual-region buckets only. 
+          If rpo is not specified at bucket creation, it defaults to "DEFAULT" for dual and multi-region buckets.
+          NOTE If used with single-region bucket, It will throw an error.
         END
       }
 

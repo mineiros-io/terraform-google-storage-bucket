@@ -11,7 +11,7 @@
 A [Terraform](https://www.terraform.io) module to create a [Google Cloud Storage](https://cloud.google.com/storage) on [Google Cloud Services (GCP)](https://cloud.google.com/).
 
 **_This module supports Terraform version 1
-and is compatible with the Terraform Google Provider version 4._** and 5._**
+and is compatible with the Terraform Google Provider version >= 5.10
 
 This module is part of our Infrastructure as Code (IaC) framework
 that enables our users and customers to easily deploy and manage reusable,
@@ -104,9 +104,12 @@ See [variables.tf] and [examples/] for details and use-cases.
     }
     condition = {
       age                        = 60
+      no_age = false
       created_before             = "2018-08-20"
       with_state                 = "LIVE"
       matches_storage_class      = ["REGIONAL"]
+      matches_prefix = ["bucket"]
+      matches_suffix = []
       num_newer_versions         = 10
       custom_time_before         = "1970-01-01"
       days_since_custom_time     = 1
@@ -142,6 +145,10 @@ See [variables.tf] and [examples/] for details and use-cases.
 
       Minimum age of an object in days to satisfy this condition.
 
+    - [**`no_age`**](#attr-lifecycle_rules-condition-no_age): *(Optional `bool`)*<a name="attr-lifecycle_rules-condition-no_age"></a>
+
+      While set true, age value will be omitted. Required to set true when age is unset in the config file.
+
     - [**`created_before`**](#attr-lifecycle_rules-condition-created_before): *(Optional `string`)*<a name="attr-lifecycle_rules-condition-created_before"></a>
 
       A date in the RFC 3339 format YYYY-MM-DD. This condition is satisfied when an object is created before midnight of the specified date in UTC.
@@ -153,6 +160,14 @@ See [variables.tf] and [examples/] for details and use-cases.
     - [**`matches_storage_class`**](#attr-lifecycle_rules-condition-matches_storage_class): *(Optional `string`)*<a name="attr-lifecycle_rules-condition-matches_storage_class"></a>
 
       Storage Class of objects to satisfy this condition. Supported values include: `STANDARD`, `MULTI_REGIONAL`, `REGIONAL`, `NEARLINE`, `COLDLINE`, `ARCHIVE`, `DURABLE_REDUCED_AVAILABILITY`.
+
+    - [**`matches_prefix`**](#attr-lifecycle_rules-condition-matches_prefix): *(Optional `string`)*<a name="attr-lifecycle_rules-condition-matches_prefix"></a>
+
+      One or more matching name prefixes to satisfy this condition.
+
+    - [**`matches_suffix`**](#attr-lifecycle_rules-condition-matches_suffix): *(Optional `string`)*<a name="attr-lifecycle_rules-condition-matches_suffix"></a>
+
+      One or more matching name suffixes to satisfy this condition.
 
     - [**`num_newer_versions`**](#attr-lifecycle_rules-condition-num_newer_versions): *(Optional `number`)*<a name="attr-lifecycle_rules-condition-num_newer_versions"></a>
 
@@ -203,6 +218,33 @@ See [variables.tf] and [examples/] for details and use-cases.
 
     The custom object to return when a requested resource is not found.
 
+- [**`autoclass`**](#var-autoclass): *(Optional `object(website)`)*<a name="var-autoclass"></a>
+
+  The bucket's Autoclass configuration.
+
+  Example:
+
+  ```hcl
+  autoclass = {
+    enabled = true
+    terminal_storage_class   = "NEARLINE"
+  }
+  ```
+
+  The `website` object accepts the following attributes:
+
+  - [**`enabled`**](#attr-autoclass-enabled): *(**Required** `string`)*<a name="attr-autoclass-enabled"></a>
+
+    While set to true, autoclass automatically transitions 
+    objects in your bucket to appropriate storage classes 
+    based on each object's access pattern.
+
+  - [**`terminal_storage_class`**](#attr-autoclass-terminal_storage_class): *(Optional `string`)*<a name="attr-autoclass-terminal_storage_class"></a>
+
+    The storage class that objects in the bucket eventually 
+    transition to if they are not read for a certain length of time. 
+    Supported values include: NEARLINE, ARCHIVE.
+
 - [**`cors`**](#var-cors): *(Optional `list(cors)`)*<a name="var-cors"></a>
 
   The bucket's Cross-Origin Resource Sharing (CORS) configuration.
@@ -239,6 +281,16 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`encryption_default_kms_key_name`**](#var-encryption_default_kms_key_name): *(Optional `string`)*<a name="var-encryption_default_kms_key_name"></a>
 
   The id of a Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified. You must pay attention to whether the crypto key is available in the location that this bucket is created in.
+
+- [**`custom_placement_config`**](#var-custom_placement_config): *(Optional `object(custom_placement_config)`)*<a name="var-custom_placement_config"></a>
+
+  The bucket's custom location configuration, which specifies the individual regions that comprise a dual-region bucket. If the bucket is designated a single or multi-region, the parameters are empty.
+
+  The `custom_placement_config` object accepts the following attributes:
+
+  - [**`data_locations`**](#attr-custom_placement_config-data_locations): *(**Required** `list(string)`)*<a name="attr-custom_placement_config-data_locations"></a>
+
+    The list of individual regions that comprise a dual-region bucket. If any of the data_locations changes, it will recreate the bucket.
 
 - [**`logging`**](#var-logging): *(Optional `object(logging)`)*<a name="var-logging"></a>
 
@@ -303,6 +355,37 @@ See [variables.tf] and [examples/] for details and use-cases.
   Enables Uniform bucket-level access access to a bucket.
 
   Default is `true`.
+
+- [**`default_event_based_hold`**](#var-default_event_based_hold): *(Optional `bool`)*<a name="var-default_event_based_hold"></a>
+
+  Whether or not to automatically apply an eventBasedHold to new objects added to the bucket.
+
+  Default is `false`.
+
+- [**`enable_object_retention`**](#var-enable_object_retention): *(Optional `bool`)*<a name="var-enable_object_retention"></a>
+
+  Enables object retention on a storage bucket.
+
+  Default is `false`.
+
+- [**`public_access_prevention`**](#var-public_access_prevention): *(Optional `string`)*<a name="var-public_access_prevention"></a>
+
+  Prevents public access to a bucket. Acceptable values are "inherited" or "enforced". 
+  If "inherited", the bucket uses public access prevention. only if the bucket is subject 
+  to the public access prevention organization policy constraint. Defaults to "inherited".
+
+  Default is `"inherited"`.
+
+- [**`rpo`**](#var-rpo): *(Optional `string`)*<a name="var-rpo"></a>
+
+  The recovery point objective for cross-region replication of the bucket. 
+  Applicable only for dual and multi-region buckets. 
+  "DEFAULT" sets default replication. 
+  "ASYNC_TURBO" value enables turbo replication, valid for dual-region buckets only. 
+  If rpo is not specified at bucket creation, it defaults to "DEFAULT" for dual and multi-region buckets.
+  NOTE If used with single-region bucket, It will throw an error.
+
+  Default is `null`.
 
 - [**`object_creators`**](#var-object_creators): *(Optional `set(string)`)*<a name="var-object_creators"></a>
 
